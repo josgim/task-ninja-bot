@@ -269,20 +269,20 @@ def main():
     app = ApplicationBuilder().token(TOKEN).build()
     
     # Registrar comandos
-    """ app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_task))
     app.add_handler(CommandHandler("list", list_tasks))
     app.add_handler(CommandHandler("delete", delete_task))
     app.add_handler(CommandHandler("vencimiento", filter_due)) 
     #Iniciar jobs
-    app.add_handler(CommandHandler("start_daily", start_daily_task))"""
-    app.add_handler(CallbackQueryHandler(button_click))  # Maneja los botones inline
+    app.add_handler(CommandHandler("start_daily", start_daily_task))
+    # app.add_handler(CallbackQueryHandler(button_click))  # Maneja los botones inline
 
     
 
     # Iniciar Long Polling
     print("🤖 Bot activado...")
-
+    
     # Configurar webhook al iniciar
     app.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
