@@ -10,6 +10,7 @@ from sqlalchemy import func
 # Cargar variables de entorno
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
+PORT = int(os.getenv('PORT', '10000'))
 
 # Handlers de comandos
 """ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -258,6 +259,12 @@ async def start_daily_task(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(f"⏰ Recordatorio diario activado (ID: {job.name})")
 
+async def setup_webhook(app: ApplicationBuilder):
+    await app.bot.set_webhook(
+        url="https://task-ninja-bot.onrender.com",  # URL pública de tu servicio en Render
+        #secret_token="TU_SECRETO"  # Opcional: token de seguridad
+    )
+
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
     
@@ -275,7 +282,14 @@ def main():
 
     # Iniciar Long Polling
     print("🤖 Bot activado...")
-    app.run_polling()
+
+    # Configurar webhook al iniciar
+    app.run_webhook(
+        listen="0.0.0.0",  # Escuchar en todas las interfaces
+        port=PORT,
+        #secret_token="TU_SECRETO",
+        webhook_url="https://task-ninja-bot.onrender.com"
+    )
 
 if __name__ == "__main__":
     main()
