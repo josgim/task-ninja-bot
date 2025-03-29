@@ -10,7 +10,7 @@ from sqlalchemy import func
 # Cargar variables de entorno
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
-PORT = int(os.getenv('PORT', '10000'))
+PORT = int(os.environ.get("PORT", 10000))
 
 # Handlers de comandos
 """ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -279,8 +279,6 @@ def main():
     # app.add_handler(CallbackQueryHandler(button_click))  # Maneja los botones inline
 
     
-
-    # Iniciar Long Polling
     print("🤖 Bot activado...")
     
     # Configurar webhook al iniciar
@@ -292,4 +290,5 @@ def main():
     )
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())
