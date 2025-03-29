@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext, ContextTypes
 from database import Task, get_session
 from datetime import time, datetime
 import pytz  # Para zonas horarias
@@ -224,7 +224,7 @@ async def filter_due(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         await update.message.reply_text(response)
 
-""" async def notify_due_tasks(context: CallbackContext):
+async def notify_due_tasks(context: CallbackContext):
     with get_session() as session:
         today = datetime.now().date()
         tasks = session.query(Task).filter(Task.due_date == today).all()
@@ -235,7 +235,7 @@ async def filter_due(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=task.chat_id,
                 text=f"⚠️ ¡Hoy ({fecha_str}) vence: *{task.task}*!",
                 parse_mode="Markdown"
-            ) """
+            )
 
 # Función que se ejecutará diariamente
 async def daily_task(context: ContextTypes.DEFAULT_TYPE):
@@ -280,6 +280,9 @@ def main():
 
     
     print("🤖 Bot activado...")
+
+    #Añadir jobs
+    app.job_queue.run_daily(notify_due_tasks, time=datetime.time(hour=12, minute=0))
     
     # Configurar webhook al iniciar
     app.run_webhook(
