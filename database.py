@@ -17,6 +17,7 @@ class Task(Base):
 # Configurar la base de datos
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///tasks.db")
 engine = create_engine(DATABASE_URL)
+Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 
