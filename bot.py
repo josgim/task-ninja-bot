@@ -324,11 +324,7 @@ def run_flask():
 
 
 if __name__ == "__main__":
-    import threading
-    # Hilo para el bot (async)
-    bot_thread = threading.Thread(target=lambda: asyncio.run(run_bot()))
-    bot_thread.start()
-    
-    # Hilo para Flask
-    flask_thread = threading.Thread(target=run_flask)
-    flask_thread.start()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(run_bot())
+    app.run(host='0.0.0.0', port=5000)
