@@ -306,13 +306,7 @@ async def run_bot():
 # Endpoint de health
 @appWeb.route('/health')
 def health():
-    return jsonify({"status": "active", "telegram_ok": check_bot()})
-
-def check_bot():
-    try:
-        return app.bot.get_me() is not None
-    except Exception:
-        return False
+    return jsonify({"status": "active"})
 
 
 
