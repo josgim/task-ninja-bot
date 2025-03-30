@@ -7,12 +7,17 @@ from datetime import time, datetime
 import pytz  # Para zonas horarias
 from sqlalchemy import func
 from flask import Flask, jsonify
-from threading import Thread
+import asyncio
 
 # Cargar variables de entorno
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 PORT = int(os.environ.get("PORT", 10000))
+
+appWeb = Flask(__name__)
+
+# Configuración del bot
+app = ApplicationBuilder().token(TOKEN).build()
 
 # Handlers de comandos
 """ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -267,9 +272,7 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-def run_bot():
-    app = ApplicationBuilder().token(TOKEN).build()
-    
+async def run_bot():
     # Registrar comandos
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_task))
@@ -288,8 +291,10 @@ def run_bot():
     hora_programada = time(hour=12, minute=0, tzinfo=tz)
     app.job_queue.run_daily(notify_due_tasks, time=hora_programada)
     
+    await app.initialize()
+    await app.start()
     # Configurar webhook al iniciar
-    app.run_webhook(
+    await app.updater.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
         port=PORT,
         #secret_token="TU_SECRETO",
@@ -300,25 +305,30 @@ def run_bot():
 #Servidor web con Flask#
 ########################
 
-appWeb = Flask(__name__)
-
 # Endpoint de health
 @appWeb.route('/health')
 def health():
-    return jsonify({
-        "status": "OK",
-        "timestamp": datetime.now()
-    })
+    return jsonify({"status": "active", "telegram_ok": check_bot()})
+
+def check_bot():
+    try:
+        return app.bot.get_me() is not None
+    except Exception:
+        return False
 
 
 
-def run_server():
+def run_flask():
     appWeb.run(host='0.0.0.0', port=PORT)
 
 
 
 if __name__ == "__main__":
-        
-    # Hilos para el bot y el servidor web
-    Thread(target=run_bot).start()
-    Thread(target=run_server).start()
+    import threading
+    # Hilo para el bot (async)
+    bot_thread = threading.Thread(target=lambda: asyncio.run(run_bot()))
+    bot_thread.start()
+    
+    # Hilo para Flask
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
