@@ -15,7 +15,7 @@ jobs:
             RETRY_DELAY=10
             
             for i in $(seq 1 $MAX_RETRIES); do
-                if curl -sSf -X GET "https://task-ninja-bot.onrender.com"; then
+                if curl -sSf -X GET "https://task-ninja-bot.onrender.com/health"; then
                 echo "✅ Ping exitoso"
                 exit 0
                 else
