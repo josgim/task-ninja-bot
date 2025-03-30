@@ -272,7 +272,7 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-async def run_bot():
+def run_bot():
     # Registrar comandos
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_task))
