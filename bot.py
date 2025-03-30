@@ -291,10 +291,8 @@ async def run_bot():
     hora_programada = time(hour=12, minute=0, tzinfo=tz)
     app.job_queue.run_daily(notify_due_tasks, time=hora_programada)
     
-    await app.initialize()
-    await app.start()
     # Configurar webhook al iniciar
-    await app.updater.run_webhook(
+    app.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
         port=PORT,
         #secret_token="TU_SECRETO",
@@ -324,7 +322,5 @@ def run_flask():
 
 
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(run_bot())
-    app.run(host='0.0.0.0', port=5000)
+    run_bot()
+    run_flask()
