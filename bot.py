@@ -6,6 +6,8 @@ from database import Task, get_session
 from datetime import time, datetime
 import pytz  # Para zonas horarias
 from sqlalchemy import func
+from flask import Flask, jsonify
+from threading import Thread
 
 # Cargar variables de entorno
 load_dotenv()
@@ -265,7 +267,7 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-def main():
+def run_bot():
     app = ApplicationBuilder().token(TOKEN).build()
     
     # Registrar comandos
@@ -294,5 +296,32 @@ def main():
         webhook_url="https://task-ninja-bot.onrender.com"
     )
 
+########################
+#Servidor web con Flask#
+########################
+
+appWeb = Flask(__name__)
+
+# Endpoint de health
+@appWeb.route('/health')
+def health():
+    return jsonify({
+        "status": "OK",
+        "timestamp": datetime.now()
+    })
+
+
+
+def run_web():
+    appWeb.run(host='0.0.0.0', port=5000)
+
+
+
 if __name__ == "__main__":
-    main()
+    # Hilo para el bot
+    bot_thread = Thread(target=run_bot)
+    bot_thread.start()
+    
+    # Hilo para el servidor web
+    web_thread = Thread(target=run_web)
+    web_thread.start()
