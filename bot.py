@@ -312,16 +312,13 @@ def health():
 
 
 
-def run_web():
-    appWeb.run(host='0.0.0.0', port=5000)
+def run_server():
+    appWeb.run(host='0.0.0.0', port=PORT)
 
 
 
 if __name__ == "__main__":
-    # Hilo para el bot
-    bot_thread = Thread(target=run_bot)
-    bot_thread.start()
-    
-    # Hilo para el servidor web
-    web_thread = Thread(target=run_web)
-    web_thread.start()
+        
+    # Hilos para el bot y el servidor web
+    Thread(target=run_bot).start()
+    Thread(target=run_server).start()
