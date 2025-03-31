@@ -304,14 +304,14 @@ def run_bot():
 ########################
 
 # Endpoint de health
-@appWeb.route('/health')
+@appWeb.route("/health")
 def health():
-    return jsonify({"status": "active"})
+    return jsonify({"status": "OK"}), 200
 
 
 
 def run_flask():
-    appWeb.run(host='0.0.0.0', port=PORT)
+    appWeb.run(host="0.0.0.0", port=PORT)
 
 
 
