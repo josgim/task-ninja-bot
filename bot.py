@@ -319,4 +319,4 @@ def run_flask():
 
 if __name__ == "__main__":
     run_bot()
-    #run_flask()
+    run_flask()
