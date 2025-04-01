@@ -290,14 +290,16 @@ def run_bot():
     """ tz=pytz.timezone("Europe/Madrid")
     hora_programada = time(hour=12, minute=0, tzinfo=tz)
     app.job_queue.run_daily(notify_due_tasks, time=hora_programada) """
+
+    app.run_polling()
     
     # Configurar webhook al iniciar
-    app.run_webhook(
+    """ app.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
         port=PORT,
         #secret_token="TU_SECRETO",
         webhook_url="https://task-ninja-bot.onrender.com"
-    )
+    ) """
 
 ########################
 #Servidor web con Flask#
