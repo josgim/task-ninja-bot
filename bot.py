@@ -287,9 +287,9 @@ def run_bot():
     print("🤖 Bot activado...")
 
     #Añadir jobs
-    tz=pytz.timezone("Europe/Madrid")
+    """ tz=pytz.timezone("Europe/Madrid")
     hora_programada = time(hour=12, minute=0, tzinfo=tz)
-    app.job_queue.run_daily(notify_due_tasks, time=hora_programada)
+    app.job_queue.run_daily(notify_due_tasks, time=hora_programada) """
     
     # Configurar webhook al iniciar
     app.run_webhook(
@@ -317,4 +317,4 @@ def run_flask():
 
 if __name__ == "__main__":
     run_bot()
-    run_flask()
+    #run_flask()
