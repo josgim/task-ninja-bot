@@ -321,12 +321,12 @@ def run_flask():
 if __name__ == "__main__":
     # Crea hilos para cada servicio
     bot_thread = threading.Thread(target=run_bot)
-    flask_thread = threading.Thread(target=run_flask)
+    #flask_thread = threading.Thread(target=run_flask)
     
     # Inicia los hilos
     bot_thread.start()
-    flask_thread.start()
+    #flask_thread.start()
     
     # Espera a que ambos hilos terminen (en teoría, nunca lo harán)
     bot_thread.join()
-    flask_thread.join()
+    #flask_thread.join()
