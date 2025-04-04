@@ -269,7 +269,7 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-def run_bot():
+async def run_bot():
     # Registrar comandos
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_task))
@@ -291,7 +291,7 @@ def run_bot():
     # app.run_polling()
     
     # Configurar webhook al iniciar
-    app.run_webhook(
+    await app.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
         port=PORT,
         #secret_token="TU_SECRETO",
@@ -309,8 +309,8 @@ def health():
 
 
 
-def run_flask():
-    appWeb.run(host="0.0.0.0", port=PORT)
+async def run_flask():
+    await appWeb.run(host="0.0.0.0", port=PORT)
 
 
 
