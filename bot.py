@@ -314,21 +314,25 @@ async def webhook():
     return 'OK', 200
 
 async def setup_webhook():
+    """Configura el webhook para Telegram"""
     await bot_app.bot.set_webhook(
-        url=f"https://task-ninja-bot.onrender.com/webhook",
-        #secret_token='TU_SECRETO'
+        url="https://task-ninja-bot.onrender.com/webhook",
+        # secret_token="TU_SECRETO"
     )
+    print("🌐 Webhook configurado correctamente")
 
 def run_server():
+    """Inicia el servidor Flask y configura el bot"""
+    # Configurar handlers primero
     setup_handlers()
     
-    # Configurar webhook asincrónicamente
+    # Configurar webhook
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(setup_webhook())
     
     # Iniciar servidor Flask
-    print("🌐 Servidor Flask iniciado...")
+    print(f"🚀 Servidor iniciado en puerto {PORT}")
     appWeb.run(host='0.0.0.0', port=PORT, use_reloader=False)
 
 if __name__ == '__main__':
