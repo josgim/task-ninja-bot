@@ -6,9 +6,8 @@ from database import Task, get_session
 from datetime import time, datetime
 import pytz  # Para zonas horarias
 from sqlalchemy import func
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import asyncio
-import threading
 
 # Cargar variables de entorno
 load_dotenv()
@@ -18,7 +17,7 @@ PORT = int(os.environ.get("PORT", 10000))
 appWeb = Flask(__name__)
 
 # Configuración del bot
-app = ApplicationBuilder().token(TOKEN).build()
+bot_app = ApplicationBuilder().token(TOKEN).build()
 
 # Handlers de comandos
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -269,15 +268,15 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-async def run_bot_async():
+async def setup_handlers():
     # Registrar comandos
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("add", add_task))
-    app.add_handler(CommandHandler("list", list_tasks))
-    app.add_handler(CommandHandler("delete", delete_task))
-    app.add_handler(CommandHandler("vencimiento", filter_due)) 
+    bot_app.add_handler(CommandHandler("start", start))
+    bot_app.add_handler(CommandHandler("add", add_task))
+    bot_app.add_handler(CommandHandler("list", list_tasks))
+    bot_app.add_handler(CommandHandler("delete", delete_task))
+    bot_app.add_handler(CommandHandler("vencimiento", filter_due)) 
     #Iniciar jobs
-    app.add_handler(CommandHandler("start_daily", start_daily_task))
+    bot_app.add_handler(CommandHandler("start_daily", start_daily_task))
     # app.add_handler(CallbackQueryHandler(button_click))  # Maneja los botones inline
 
     
@@ -291,12 +290,12 @@ async def run_bot_async():
     # app.run_polling()
     
     # Configurar webhook al iniciar
-    await app.run_webhook(
+    """ await app.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
         port=PORT,
         #secret_token="TU_SECRETO",
         webhook_url="https://task-ninja-bot.onrender.com"
-    )
+    ) """
 
 ########################
 #Servidor web con Flask#
@@ -307,22 +306,30 @@ async def run_bot_async():
 def health():
     return jsonify({"status": "OK"}), 200
 
+# Ruta para webhook de Telegram
+@appWeb.route('/webhook', methods=['POST'])
+async def webhook():
+    update = Update.de_json(await request.get_json(), bot_app.bot)
+    await bot_app.process_update(update)
+    return 'OK', 200
 
+async def setup_webhook():
+    await bot_app.bot.set_webhook(
+        url=f"https://task-ninja-bot.onrender.com/webhook",
+        #secret_token='TU_SECRETO'
+    )
 
-def run_flask_sync():
+def run_server():
+    setup_handlers()
+    
+    # Configurar webhook asincrónicamente
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(setup_webhook())
+    
+    # Iniciar servidor Flask
     print("🌐 Servidor Flask iniciado...")
-    appWeb.run(host="0.0.0.0", port=PORT, use_reloader=False)
+    appWeb.run(host='0.0.0.0', port=PORT, use_reloader=False)
 
-def main():
-    # Crear hilo para Flask
-    flask_thread = threading.Thread(target=run_flask_sync)
-    flask_thread.daemon = True  # Opcional: terminar con el programa principal
-    
-    # Iniciar ambos servicios
-    flask_thread.start()
-    
-    # Ejecutar el bot en el hilo principal con asyncio
-    asyncio.run(run_bot_async())
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    run_server()
