@@ -269,7 +269,7 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-async def run_bot():
+async def run_bot_async():
     # Registrar comandos
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_task))
@@ -309,12 +309,20 @@ def health():
 
 
 
-async def run_flask():
-    await appWeb.run(host="0.0.0.0", port=PORT)
+def run_flask_sync():
+    print("🌐 Servidor Flask iniciado...")
+    appWeb.run(host="0.0.0.0", port=PORT, use_reloader=False)
 
-
+def main():
+    # Crear hilo para Flask
+    flask_thread = threading.Thread(target=run_flask_sync)
+    flask_thread.daemon = True  # Opcional: terminar con el programa principal
+    
+    # Iniciar ambos servicios
+    flask_thread.start()
+    
+    # Ejecutar el bot en el hilo principal con asyncio
+    asyncio.run(run_bot_async())
 
 if __name__ == "__main__":
-
-    run_bot()
-    run_flask()
+    main()
