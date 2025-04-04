@@ -15,7 +15,7 @@ load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 PORT = int(os.environ.get("PORT", 10000))
 
-appWeb = Flask(__name__)
+#appWeb = Flask(__name__)
 
 # Configuración del bot
 app = ApplicationBuilder().token(TOKEN).build()
