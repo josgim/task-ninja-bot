@@ -27,20 +27,21 @@ app = ApplicationBuilder().token(TOKEN).build()
                                     "/list - Ver tareas\n"
                                     "/delete [número] - Eliminar tarea") """
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Muestra un menú principal con botones inline."""
-    keyboard = [
-        [InlineKeyboardButton("➕ Añadir tarea", callback_data="add_task")],
-        [InlineKeyboardButton("📋 Listar tareas", callback_data="list_tasks")],
-        [InlineKeyboardButton("🗑️ Eliminar tarea", callback_data="delete_task")]
-        [InlineKeyboardButton("🔍 Filtrar por fecha", callback_data="filter_due")]
-        [InlineKeyboardButton("🕒 Activar recordatorios", callback_data="start_daily_task")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    """Muestra un mensaje de bienvenida con los comandos disponibles"""
+    mensaje = """📝 ¡Hola! Soy tu bot de tareas. Comandos disponibles:
     
-    await update.message.reply_text(
+            /add [tarea] [fecha] - Añadir tarea (ej: /add Comprar leche 25/12/2024)
+            /list - Ver todas las tareas
+            /delete [número] - Eliminar una tarea
+            /vencimiento [fecha] - Filtrar tareas por fecha
+            /start_daily - Activar recordatorios diarios
+    """
+    await update.message.reply_text(mensaje)
+    
+    """ await update.message.reply_text(
         "🎮 **Menú Principal**\nElige una acción:",
         reply_markup=reply_markup
-    )
+    ) """
 
 async def button_click(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Maneja los clics en los botones inline."""
