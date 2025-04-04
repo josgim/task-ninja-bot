@@ -8,6 +8,8 @@ import pytz  # Para zonas horarias
 from sqlalchemy import func
 from flask import Flask, jsonify, request
 import asyncio
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 
 # Cargar variables de entorno
 load_dotenv()
@@ -321,19 +323,20 @@ async def setup_webhook():
     )
     print("🌐 Webhook configurado correctamente")
 
-def run_server():
-    """Inicia el servidor Flask y configura el bot"""
-    # Configurar handlers primero
+async def run_server():
+    # Configurar handlers del bot
     setup_handlers()
     
     # Configurar webhook
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(setup_webhook())
+    await setup_webhook()
     
-    # Iniciar servidor Flask
-    print(f"🚀 Servidor iniciado en puerto {PORT}")
-    appWeb.run(host='0.0.0.0', port=PORT, use_reloader=False)
+    # Configurar servidor Hypercorn
+    config = Config()
+    config.bind = [f"0.0.0.0:{PORT}"]
+    
+    # Iniciar servidor
+    await serve(appWeb, config)
+
 
 if __name__ == '__main__':
-    run_server()
+    asyncio.run(run_server())
