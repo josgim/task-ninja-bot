@@ -269,7 +269,7 @@ async def setup_webhook(app: ApplicationBuilder):
         #secret_token="TU_SECRETO"  # Opcional: token de seguridad
     )
 
-def run_bot():
+async def async_run_bot():
     # Registrar comandos
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("add", add_task))
@@ -291,12 +291,15 @@ def run_bot():
     # app.run_polling()
     
     # Configurar webhook al iniciar
-    app.run_webhook(
+    await app.run_webhook(
         listen="0.0.0.0",  # Escuchar en todas las interfaces
         port=PORT,
         #secret_token="TU_SECRETO",
         webhook_url="https://task-ninja-bot.onrender.com"
     )
+
+def run_bot():
+    asyncio.run(async_run_bot())
 
 ########################
 #Servidor web con Flask#
@@ -315,7 +318,7 @@ def run_flask():
 
 
 if __name__ == "__main__":
-    
+
     # Crea hilos para cada servicio
     bot_thread = threading.Thread(target=run_bot)
     flask_thread = threading.Thread(target=run_flask)
