@@ -316,12 +316,10 @@ async def webhook():
     return 'OK', 200
 
 async def setup_webhook():
-    """Configura el webhook para Telegram"""
     await bot_app.bot.set_webhook(
         url="https://task-ninja-bot.onrender.com/webhook",
-        # secret_token="TU_SECRETO"
+        allowed_updates=["message", "callback_query"]
     )
-    print("🌐 Webhook configurado correctamente")
 
 async def run_server():
     # Configurar handlers del bot
