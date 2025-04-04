@@ -15,17 +15,12 @@ load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 PORT = int(os.environ.get("PORT", 10000))
 
-#appWeb = Flask(__name__)
+appWeb = Flask(__name__)
 
 # Configuración del bot
 app = ApplicationBuilder().token(TOKEN).build()
 
 # Handlers de comandos
-""" async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("📝 ¡Hola! Soy tu bot de tareas. Usa:\n"
-                               <<<<<<<<<<<<<<<<<<<<<<<<<<<                                                                                                                                                                                 "/add [tarea] - Añadir tarea\n"
-                                    "/list - Ver tareas\n"
-                                    "/delete [número] - Eliminar tarea") """
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Muestra un mensaje de bienvenida con los comandos disponibles"""
     mensaje = """📝 ¡Hola! Soy tu bot de tareas. Comandos disponibles:
@@ -308,22 +303,21 @@ def run_bot():
 ########################
 
 # Endpoint de health
-""" @appWeb.route("/health")
+@appWeb.route("/health")
 def health():
-    return jsonify({"status": "OK"}), 200 """
+    return jsonify({"status": "OK"}), 200
 
 
 
-""" def run_flask():
-    appWeb.run(host="0.0.0.0", port=PORT) """
+def run_flask():
+    appWeb.run(host="0.0.0.0", port=PORT)
 
 
 
 if __name__ == "__main__":
-    run_bot()
-
+    
     # Crea hilos para cada servicio
-    """ bot_thread = threading.Thread(target=run_bot)
+    bot_thread = threading.Thread(target=run_bot)
     flask_thread = threading.Thread(target=run_flask)
     
     # Inicia los hilos
@@ -332,4 +326,4 @@ if __name__ == "__main__":
     
     # Espera a que ambos hilos terminen (en teoría, nunca lo harán)
     bot_thread.join()
-    flask_thread.join() """
+    flask_thread.join()
